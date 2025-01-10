@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import "./config/instrument.js"
 import * as Sentry from "@sentry/node";
 import { clerkWebhooks } from "./controllers/webhooks.js";
+import bodyParser from "body-parser";
 
 const PORT = process.env.PORT || 4000; // port
 
@@ -17,6 +18,13 @@ await connectDB()
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(
+  bodyParser.json({
+    verify: (req, res, buf) => {
+      req.rawBody = buf; // Store raw body for svix verification
+    },
+  })
+);
 
 
 // Routes
