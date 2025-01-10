@@ -3,6 +3,7 @@ import User from "../models/User.js";
 
 export const clerkWebhooks = async (req, res) => {
   try {
+    // Ensure headers are present
     const requiredHeaders = ["svix-id", "svix-signature", "svix-timestamp"];
     for (const header of requiredHeaders) {
       if (!req.headers[header]) {
@@ -15,7 +16,10 @@ export const clerkWebhooks = async (req, res) => {
 
     const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
-    // Verify webhook
+    // Log raw body to debug if necessary
+    console.log("Raw Body:", req.rawBody);
+
+    // Verify webhook signature
     whook.verify(req.rawBody, {
       "svix-id": req.headers["svix-id"],
       "svix-signature": req.headers["svix-signature"],
