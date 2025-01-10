@@ -23,6 +23,7 @@ const Navbar = () => {
             <Link to='/applications'>Applied Jobs</Link>
             <p>|</p>
             <p className="max-sm:hidden">Hi, {user.firstName+" "+user.lastName} </p>
+            <UserButton/>
         </div>
          : 
           <div className="flex gap-4 max-sm:text-xs">
@@ -35,7 +36,7 @@ const Navbar = () => {
             </button>
           </div>
         }
-      </div>
+      </div> 
     </div>
   );
 };
