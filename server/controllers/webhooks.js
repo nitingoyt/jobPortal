@@ -6,7 +6,7 @@ import User from "../models/User.js";
 export const clerkWebhooks = async (req, res) => {
   try {
     // Svix instance with clerkwebhook secret
-    const whook = new Webhook (process.env.CLERK_WEBHOOK_SECRET);
+    const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
     //   verify headers
     await whook.verify(JSON.stringify(req.body), {
@@ -16,14 +16,23 @@ export const clerkWebhooks = async (req, res) => {
     });
 
     // geting data from body
-    const { data, type } = req.body
+    const { data, type } = req.body;
+    console.log("Request Body:", req.body);
 
     // Switch cases for diff events
     switch (type) {
       case "user.created": {
+        const email =
+          Array.isArray(data.email_address) && data.email_address.length > 0
+            ? data.email_address[0].email_address
+            : null;
+
+        if (!email) {
+          throw new Error("Email address not found in user.create event.");
+        }
         const userData = {
           _id: data.id,
-          email: data.email_address[0].email_address,
+          email,
           name: data.first_name + " " + data.last_name,
           image: data.image_url,
           resume: "",
@@ -51,7 +60,7 @@ export const clerkWebhooks = async (req, res) => {
         break;
     }
   } catch (error) {
-    console.log(error.message)
-    res.json({success:false, message:'Webhook Message' })
+    console.log(error.message);
+    res.json({ success: false, message: "Webhook Message" });
   }
 };
