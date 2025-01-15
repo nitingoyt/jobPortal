@@ -1,9 +1,28 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { assets } from "../assets/assets";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const {companyData, backendUrl, setCompanyData, setCompanyToken} = useContext(AppContext)
+  
+  // func to logout
+
+  const logout = () => {
+    setCompanyToken(null)
+    localStorage.removeItem('comapnyToken')
+    setCompanyData(null)
+    navigate('/')
+  }
+
+  useEffect(()=>{
+    if(companyData){
+      navigate('/dashboard/manage-jobs')
+    }
+  },[companyData])
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navbar for panel */}
@@ -15,12 +34,12 @@ const Dashboard = () => {
             alt="Logo"
             className="h-12 cursor-pointer"
           />
-        </div>
+          {companyData && (
         <div className="flex items-center gap-4">
-          <p className="text-gray-700 font-medium">Welcome, Nitin</p>
+          <p className="text-gray-700 font-medium">Welcome, {companyData.name}</p>
           <div className="relative group">
             <img
-              src={assets.company_icon}
+              src={companyData.image}
               alt="Company Icon"
               className="h-10 w-10 rounded-full cursor-pointer border border-gray-300"
             />
@@ -28,15 +47,15 @@ const Dashboard = () => {
               <ul className="text-sm text-gray-700">
                 <li
                   className="p-2 hover:bg-gray-100 cursor-pointer text-center"
-                  onClick={() => {
-                    console.log("Logout clicked");
-                  }}
+                  onClick={logout}
                 >
                   Logout
                 </li>
               </ul>
             </div>
           </div>
+        </div>
+          )}
         </div>
       </div>
 
